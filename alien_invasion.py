@@ -9,6 +9,7 @@ from button import Button
 from explosion import Explosion
 from game_stats import GameStats
 from metors import Meteor
+from powerups import Powerups
 from scoreboard import ScoreBoard
 from settings import Settings
 from ship import Ship
@@ -40,6 +41,7 @@ class AlienInvasion:
         self.alien_bullets = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
         self.meteors = pygame.sprite.Group()
+        self.powerups = pygame.sprite.Group()
 
         self._create_fleet()
 
@@ -54,6 +56,7 @@ class AlienInvasion:
                 self.bullets.update()
                 self.alien_bullets.update()
                 self.meteors.update()
+                self.powerups.update()
                 self._fire_alien_bullet()
                 self._update_bullets()
                 self._update_aliens()
@@ -76,6 +79,7 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
         self.explosions.draw(self.screen)
         self.meteors.draw(self.screen)
+        self.powerups.draw(self.screen)
         self.sb.show_score()
         self.ship.render()
         if not self.game_active:
@@ -120,6 +124,7 @@ class AlienInvasion:
             self.ship.moving_down = False
 
     def _fire_bullet(self):
+        print(self.settings.bullets_allowed)
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self, self.ship.rect.centerx, self.ship.rect.top, 'up')
             self.bullets.add(new_bullet)
@@ -138,6 +143,7 @@ class AlienInvasion:
 
         self.check_bullet_alien_collisions()
         self.check_bullet_meteor_collisions()
+        self.check_ship_powerup_collisions()
 
         for bullet in self.alien_bullets.copy():
             if bullet.rect.top >= self.settings.screen_height:
@@ -210,6 +216,11 @@ class AlienInvasion:
         for aliens in collisions.values():
             self.stats.score += self.settings.alien_points * len(aliens)
             self._create_explosion(aliens[0].rect.center)
+            is_powerup = random.random() < 0.1
+
+            if is_powerup:
+                powerup = Powerups(self, aliens[0].rect.centerx, aliens[0].rect.centery)
+                self.powerups.add(powerup)
 
         self.sb.prep_score()
         self.sb.check_high_score()
@@ -228,12 +239,17 @@ class AlienInvasion:
         if pygame.sprite.spritecollideany(self.ship, self.alien_bullets):
             self.ship_hit()
 
+    def check_ship_powerup_collisions(self):
+        collision = pygame.sprite.spritecollideany(self.ship, self.powerups)
+        if collision:
+            self.powerups.remove(collision)
+            self.update_powerup()
+
     def ship_hit(self):
 
         self._create_explosion(self.ship.rect.center)
 
         if self.stats.ships_left > 0:
-
             self.stats.ships_left -= 1
             self.sb.prep_ships()
 
@@ -248,6 +264,7 @@ class AlienInvasion:
             pygame.mouse.set_visible(True)
 
     def _check_play_button(self):
+
         if not self.game_active:
             self.settings.initialize_dynamic_settings()
             pygame.mouse.set_visible(False)
@@ -264,6 +281,7 @@ class AlienInvasion:
             self.ship.center_ship()
 
     def check_aliens_bottom(self):
+
         screen_rect = self.screen.get_rect()
         for alien in self.aliens.sprites():
             if alien.rect.bottom >= screen_rect.bottom:
@@ -271,13 +289,21 @@ class AlienInvasion:
                 break
 
     def _respawn_ship(self):
+
         """Respawn the ship and reset the timer."""
         self.respawn_timer = None
         self.ship = Ship(self)
         self.ship.center_ship()
 
+    def _spawn_meteors(self):
+        if len(self.meteors) < self.settings.meteor_max:
+            meteor = Meteor(self, random.choice([0, self.settings.screen_width]),
+                            random.randint(0, int(self.settings.screen_height/2)))
+            self.meteors.add(meteor)
+
     def _update_meteors(self):
         check_for_meteor_collision = pygame.sprite.spritecollideany(self.ship, self.meteors)
+
         if check_for_meteor_collision:
             self.ship_hit()
 
@@ -285,10 +311,17 @@ class AlienInvasion:
             if meteor.rect.top >= self.settings.screen_height:
                 self.meteors.remove(meteor)
 
-    def _spawn_meteors(self):
-        if len(self.meteors) < self.settings.meteor_max:
-            meteor = Meteor(self, random.choice([0, self.settings.screen_width]), random.randint(0, self.settings.screen_height - 50))
-            self.meteors.add(meteor)
+    def update_powerup(self):
+        powerup_type = random.choice([1, 4])
+        if powerup_type == 1:
+            self.settings.update_ship_speed()
+        elif powerup_type == 2:
+            self.settings.update_bullet_speed()
+        elif powerup_type == 3:
+            self.settings.update_fire_rate()
+        elif powerup_type == 4:
+            self.settings.update_bullet_type()
+
 
 if __name__ == '__main__':
     # Make a game instance and run the game

@@ -1,5 +1,8 @@
+import random
+
 import pygame
 from pygame.sprite import Sprite
+from sympy.strategies.core import switch
 
 
 class Ship(Sprite):
@@ -51,3 +54,4 @@ class Ship(Sprite):
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
+

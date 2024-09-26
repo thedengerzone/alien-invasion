@@ -13,7 +13,7 @@ class Bullet(Sprite):
 
         # Load the bullet image, scale it, and set its rect attribute
         self.image = pygame.image.load('images/bullet.png')
-        self.image = pygame.transform.scale(self.image, (self.settings.bullet_width, self.settings.bullet_height))
+        self.image = pygame.transform.scale(self.image, (self.settings.ship_bullet_width, self.settings.ship_bullet_height))
         self.rect = self.image.get_rect()
         self.rect.midtop = (x, y) if direction == 'up' else (x, y)
 
@@ -24,9 +24,9 @@ class Bullet(Sprite):
         """Move the bullet up or down the screen"""
         # Update the exact position of the bullet
         if self.direction == 'up':
-            self.y -= self.settings.bullet_speed
+            self.y -= self.settings.ship_bullet_speed
         else:
-            self.y += self.settings.bullet_speed
+            self.y += self.settings.alien_bullet_speed
         self.rect.y = self.y
 
     def draw_bullet(self):
