@@ -1,19 +1,23 @@
 import pygame
-from pygame.sprite import Sprite
 
-class Powerups(Sprite):
+
+class Meteor(pygame.sprite.Sprite):
     def __init__(self, ai_game, x, y):
         super().__init__()
-        self.images = [pygame.image.load(f'images/powerup/powerup{i}.png') for i in range(1, 3)]
-        self.images = [pygame.transform.scale(image, (30, 30)) for image in self.images]
+        self.images = [pygame.image.load(f'images/meteors/met{i}.png') for i in range(1, 5)]
+        self.images = [pygame.transform.scale(image, (50, 50)) for image in self.images]
         self.image = self.images[0]  # Set the initial image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.frame = 0
         self.last_update = pygame.time.get_ticks()
-        self.frame_rate = 120  # Time in milliseconds between frames
+        self.frame_rate = 60  # Time in milliseconds between frames
+        self.direction = x
 
         self.screen = ai_game.screen
         self.settings = ai_game.settings
+
+        self.velocity = self.settings.meteor_speed
+
 
     def update(self):
         now = pygame.time.get_ticks()
@@ -26,9 +30,16 @@ class Powerups(Sprite):
             else:
                 self.image = self.images[self.frame]
 
-        # Update position
-        self.rect.y += self.settings.meteor_speed
 
-        # Remove the powerup if it moves off the screen
-        if self.rect.top > self.screen.get_height():
-            self.kill()
+        if self.direction == 0:
+            # Update position
+            self.rect.y += self.velocity
+            self.rect.x += self.velocity
+        else:
+            self.rect.y += self.velocity
+            self.rect.x -= self.velocity
+
+    def draw_meteor(self):
+        self.screen.blit(self.image, self.rect)
+
+

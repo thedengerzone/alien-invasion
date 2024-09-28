@@ -1,5 +1,4 @@
 import pygame
-
 from pygame.sprite import Sprite
 
 class Alien(Sprite):
@@ -13,7 +12,7 @@ class Alien(Sprite):
 
         # Load the alien image and set its rect attribute
         self.image = pygame.image.load('images/mothership.png')
-        self.image = pygame.transform.scale(self.image, (75, 75))
+        self.image = pygame.transform.smoothscale(self.image, (75, 75))
         self.rect = self.image.get_rect()
 
         # Start each new alien near the top left of the screen

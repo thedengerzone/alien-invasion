@@ -1,8 +1,5 @@
 import pygame.font
-
-from pygame.sprite import Sprite
-
-from ship import Ship
+from sprites.ship import Ship
 
 class ScoreBoard:
     """A class to report scoring information"""
@@ -86,3 +83,11 @@ class ScoreBoard:
             ship.rect.y = 10
             self.ships.add(ship)
 
+    def decrement_ships(self):
+        self.ships.remove(self.ships.sprites()[0])
+
+    def update(self):
+        self.prep_score()
+        self.prep_high_score()
+        self.prep_level()
+        self.prep_ships()

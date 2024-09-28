@@ -10,14 +10,14 @@ class Settings:
         self.bg_color = (230,230,230)
 
         # Ship settings
-        self.ship_speed = 20
+        self.ship_speed = 25
 
         # Bullet settings
-        self.ship_bullet_speed = 2.0
+        self.ship_bullet_speed = 5
         self.ship_bullet_width = 5
         self.ship_bullet_height = 15
         self.bullet_color = (60, 60, 60)
-        self.bullets_allowed = 3
+        self.bullets_allowed = 10
 
         # Meteors settings
         self.meteor_speed = 2
@@ -25,7 +25,7 @@ class Settings:
 
         # Alien settings
         self.alien_points = 30
-        self.alien_speed = 1.0
+        self.alien_speed = 1
         self.bullet_max = 6
         self.alien_bullet_speed = 2.0
         self.alien_bullet_width = 5
@@ -49,12 +49,15 @@ class Settings:
         # fleet_direction of 1 represents right; -1 represents left
         self.fleet_direction = 1
 
-    def increase_speed(self):
+    def increase_difficulty(self):
         """Increase speed settings and alien point values"""
         self.ship_speed *= self.speedup_scale
         self.ship_bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
         self.alien_points = int(self.alien_points * self.score_scale)
+        self.meteor_speed *= self.speedup_scale
+        self.meteor_max =+ 1
+
 
     def update_fire_rate(self):
         self.bullets_allowed += 2
