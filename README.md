@@ -6,6 +6,7 @@ run pip install -r requirements.txt
 
 run alien_invasion.py
 
-
+Use arrow keys to move
+Use space to shoot
 Press enter to play
 Press Q to quit
